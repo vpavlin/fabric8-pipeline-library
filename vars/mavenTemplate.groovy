@@ -16,10 +16,12 @@ def call(Map parameters = [:], body) {
     if (flow.isOpenShift()) {
         podTemplate(cloud: cloud, label: label, inheritFrom: "${inheritFrom}",
                 containers: [
-                        [name: 'jnlp', image: "${jnlpImage}", args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins/'],
+                        [name: 'jnlp', image: "${jnlpImage}", args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins/', 
+                         resourceLimitMemory: '100Mi'],
                         [name: 'maven', image: "${mavenImage}", command: '/bin/sh -c', args: 'cat', ttyEnabled: true, workingDir: '/home/jenkins/',
                          envVars: [
-                                 [key: 'MAVEN_OPTS', value: '-Duser.home=/root/']]]],
+                                 [key: 'MAVEN_OPTS', value: '-Duser.home=/root/']],
+                         resourceLimitMemory: '300Mi']],
                 volumes: [secretVolume(secretName: 'jenkins-maven-settings', mountPath: '/root/.m2'),
                           persistentVolumeClaim(claimName: 'jenkins-mvn-local-repo', mountPath: '/root/.mvnrepository'),
                           secretVolume(secretName: 'jenkins-release-gpg', mountPath: '/home/jenkins/.gnupg'),
