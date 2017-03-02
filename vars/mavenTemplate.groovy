@@ -20,7 +20,12 @@ def call(Map parameters = [:], body) {
                          resourceLimitMemory: '100Mi'],
                         [name: 'maven', image: "${mavenImage}", command: '/bin/sh -c', args: 'cat', ttyEnabled: true, workingDir: '/home/jenkins/',
                          envVars: [
-                                 [key: 'MAVEN_OPTS', value: '-Duser.home=/root/']],
+                                 [key: 'MAVEN_OPTS', value: '-Duser.home=/root/ -XX:+UseParallelGC \
+         -XX:MinHeapFreeRatio=20 \
+         -XX:MaxHeapFreeRatio=40 \
+         -XX:GCTimeRatio=4 \
+         -XX:AdaptiveSizePolicyWeight=90 \
+         -Xmx=200m']],
                          resourceLimitMemory: '200Mi']],
                 volumes: [secretVolume(secretName: 'jenkins-maven-settings', mountPath: '/root/.m2'),
                           persistentVolumeClaim(claimName: 'jenkins-mvn-local-repo', mountPath: '/root/.mvnrepository'),
